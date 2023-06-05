@@ -190,28 +190,33 @@ class Config {
 
   // we need to get values sometimes, so use this internal one to do so
   // while in the process of loading.
-  #get (key, where = null) {
-    if (where !== null && !confTypes.has(where)) {
-      throw new Error('invalid config location param: ' + where)
+  #getData(location) {
+    if (location !== null && !confTypes.has(location)) {
+      throw new Error('Invalid config location parameter: ' + location);
     }
-    const { data } = this.data.get(where || 'cli')
-    return where === null || hasOwnProperty(data, key) ? data[key] : undefined
+    return this.data.get(location || 'cli').data;
   }
-
-  set (key, val, where = 'cli') {
+  
+  #get(key, location = null) {
+    const data = this.#getData(location);
+    return (location === null || hasOwnProperty(data, key)) ? data[key] : undefined;
+  }
+  
+  set(key, value, location = 'cli') {
     if (!this.loaded) {
-      throw new Error('call config.load() before setting values')
+      throw new Error('Call config.load() before setting values');
     }
-    if (!confTypes.has(where)) {
-      throw new Error('invalid config location param: ' + where)
+    if (!confTypes.has(location)) {
+      throw new Error('Invalid config location parameter: ' + location);
     }
-    this.#checkDeprecated(key)
-    const { data, raw } = this.data.get(where)
-    data[key] = val
-    if (['global', 'user', 'project'].includes(where)) {
-      raw[key] = val
+    this.#checkDeprecated(key);
+    const { data, raw } = this.data.get(location);
+    data[key] = value;
+    if (['global', 'user', 'project'].includes(location)) {
+      raw[key] = value;
     }
-
+  }
+    
     // this is now dirty, the next call to this.valid will have to check it
     this.data.get(where)[_valid] = null
 
