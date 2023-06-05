@@ -909,7 +909,7 @@ t.test('finding the local prefix', t => {
     t.equal(c.localPrefix, resolve(path, 'hasPJ'))
   })
   t.test('nada, just use cwd', async t => {
-    const c = new Config({
+    const c = 
       cwd: join('/this/path/does/not/exist/x/y/z'),
       shorthands,
       definitions,
